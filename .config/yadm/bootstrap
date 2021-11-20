@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# update ssh remote
+echo "update yadm repo origin"
+yadm remote set-url origin "git@github.com:pilina/dotfiles.git"
+
+
