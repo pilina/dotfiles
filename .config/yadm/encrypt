@@ -1,1 +1,3 @@
 .ssh/id_*
+.ssh/config
+.gitconfig
