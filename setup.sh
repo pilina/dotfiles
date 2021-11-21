@@ -30,6 +30,8 @@ if [ ! -f /.dockerenv ]; then
   apt update && apt -y install docker-ce docker-ce-cli containerd.io
   # init docker swarm
   docker swarm init
+  # set up an egress network
+  docker network create --driver=overlay public
   # add to docker group
   adduser pilina docker
 fi
