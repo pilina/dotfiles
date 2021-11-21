@@ -6,6 +6,8 @@ if [ $(id -u) -ne 0 ]; then
   exit 1
 fi
 
+DEBIAN_FRONTEND=noninteractive
+
 # prepare the system
 apt update && apt -y upgrade
 # install dependencies
@@ -48,4 +50,3 @@ su -c "yadm --bootstrap clone https://github.com/pilina/dotfiles.git" - pilina
 passwd -de pilina
 # add pilina to sudoers
 adduser pilina sudo
-
