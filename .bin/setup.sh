@@ -12,11 +12,10 @@ YADM_REPO=https://github.com/pilina/dotfiles.git
 
 main() {
   dependencies
-  harden
-  if [ ! -f /.dockerenv ]; then
-    setup_docker
-  fi
-  user
+  setup_ssh_firewall
+  setup_tailscale
+  setup_docker
+  create_user
 }
 
 dependencies() {
@@ -33,7 +32,7 @@ dependencies() {
       lsb-release
 }
 
-harden() {
+setup_ssh_firewall() {
   # No Root Login
   sed -i "s/.*PermitRootLogin.*/PermitRootLogin no/g" /etc/ssh/sshd_config
   # No Password Auth
@@ -52,6 +51,7 @@ harden() {
 }
 
 setup_docker() {
+  if [ -f /.dockerenv ]; return; fi
   # add docker gpg key
   curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
   # add docker repository
@@ -69,7 +69,7 @@ setup_docker() {
   docker network create --driver=overlay public
 }
 
-user() {
+create_user() {
   # create a shell user
   adduser --shell /bin/bash --uid 1000 --gecos "" --disabled-password $USERNAME
   # add pilina to sudoers
@@ -87,10 +87,7 @@ user() {
   systemctl restart sshd
 
   # add user to docker group if we're not in a docker env
-  if [ $(getent group docker) ]; then
-    # add to docker group
-    adduser $USERNAME docker
-  fi
+  if [ $(getent group docker) ]; adduser $USERNAME docker; fi
 
   # add github to known hosts
   su -c "touch /home/${USERNAME}/.ssh/known_hosts" $USERNAME
