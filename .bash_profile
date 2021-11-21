@@ -8,6 +8,11 @@
 # for ssh logins, install and configure the libpam-umask package.
 #umask 022
 
+# do a decrypt so all the files are present
+if [ ! -f "$HOME/.bashenv" ]; then
+    yadm decrypt
+fi
+
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
     # include .bashrc if it exists
