@@ -60,6 +60,9 @@ setup_docker() {
     $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
   # install docker engine
   apt update && apt -y install docker-ce docker-ce-cli containerd.io
+  # enable docker and containerd service
+  systemctl enable docker.service
+  systemctl enable containerd.service
   # init docker swarm
   docker swarm init
   # set up an egress network
@@ -84,7 +87,7 @@ user() {
   systemctl restart sshd
 
   # add user to docker group if we're not in a docker env
-  if [ ! -f /.dockerenv ]; then
+  if [ $(getent group docker) ]; then
     # add to docker group
     adduser $USERNAME docker
   fi
@@ -98,9 +101,26 @@ user() {
   # apply executable permission
   chmod a+x /usr/local/bin/yadm
   # clone yadm repo
-  su -c "yadm clone --no-bootstrap ${YADM_REPO}" $USERNAME
-  # reset password
-  passwd -de $USERNAME
+  su -c "yadm clone --bootstrap ${YADM_REPO}" $USERNAME
+}
+
+setup_tailscale() {
+  # Add Tailscale's GPG key
+  curl -fsSL https://pkgs.tailscale.com/stable/debian/$(lsb_release -cs).gpg | gpg --dearmor -o /usr/share/keyrings/tailscale-archive-keyring.gpg
+  # Add the tailscale repository
+  echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/stable/debian \
+    $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/tailscale.list > /dev/null
+  # Install Tailscale
+  apt update && apt -y install tailscale
+  # Enable IP Forwarding to make this an exit server
+  echo 'net.ipv4.ip_forward = 1' | tee -a /etc/sysctl.conf
+  echo 'net.ipv6.conf.all.forwarding = 1' | tee -a /etc/sysctl.conf
+  sysctl -p /etc/sysctl.conf
+
+  # lock it down
+  ufw allow in on tailscale0
+  ufw allow 41641/udp
 }
 
 main

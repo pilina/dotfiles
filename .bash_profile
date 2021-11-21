@@ -26,10 +26,6 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
-if [ ! -d "$HOME/.config/oh-my-bash" ] ; then
-    yadm bootstrap
-fi
-
 if [ -f "$HOME/.bashenv" ] ; then
     . "$HOME/.bashenv"
 fi
