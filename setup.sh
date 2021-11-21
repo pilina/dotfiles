@@ -6,7 +6,10 @@ if [ $(id -u) -ne 0 ]; then
   exit 1
 fi
 
+GPG_TTY=$(tty)
 DEBIAN_FRONTEND=noninteractive
+USERNAME=pilina
+YADM_REPO=https://github.com/pilina/dotfiles.git
 
 # prepare the system
 apt update && apt -y upgrade
@@ -16,10 +19,19 @@ apt -y install ca-certificates \
     curl \
     gnupg \
     sudo \
+    ufw \
+    vim \
     lsb-release
 
+# No Root Login
+sed -i "s/.*PermitRootLogin.*/PermitRootLogin no/g" /etc/ssh/sshd_config
+# No Password Auth
+sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication no/g" /etc/ssh/sshd_config
+# Change Address Family
+sed -i "s/.*AddressFamily.*/AddressFamily inet/g" /etc/ssh/sshd_config
+
 # create a shell user
-adduser --shell /bin/bash --uid 1000 --gecos "" --disabled-password pilina
+adduser --shell /bin/bash --uid 1000 --gecos "" --disabled-password $USERNAME
 
 if [ ! -f /.dockerenv ]; then
   # add docker gpg key
@@ -35,18 +47,43 @@ if [ ! -f /.dockerenv ]; then
   # set up an egress network
   docker network create --driver=overlay public
   # add to docker group
-  adduser pilina docker
+  adduser $USERNAME docker
 fi
+
+# add pilina to sudoers
+adduser $USERNAME sudo
+# no password necessary for sudo
+echo "${USERNAME}      ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers.d/$USERNAME
+# create the ssh folder for the user
+su -c "mkdir ~/.ssh" $USERNAME
+# create the pubkey for the user
+AUTHORIZED_COMMAND="echo '$(cat ~/.ssh/authorized_keys)' >> ~/.ssh/authorized_keys"
+su -c "$AUTHORIZED_COMMAND" $USERNAME
+# change access to file
+chmod 600 /home/$USERNAME/.ssh/authorized_keys
+# restart sshd
+systemctl restart sshd
+
+# firewall default deny incoming
+ufw default deny incoming
+# firewall default allow outgoing
+ufw default allow outgoing
+# firewall allow ssh
+ufw allow ssh/tcp
+# enable firewall
+ufw enable
+
+# add github to known hosts
+su -c "touch /home/${USERNAME}/.ssh/known_hosts" $USERNAME
+su -c "ssh-keyscan -H github.com >> ~/.ssh/known_hosts" $USERNAME
+su -c "chmod 600 ~/.ssh/known_hosts" $USERNAME
 
 # install yadm
 curl -fLo /usr/local/bin/yadm https://github.com/TheLocehiliosan/yadm/raw/master/yadm
 # apply executable permission
 chmod a+x /usr/local/bin/yadm
-
 # clone yadm repo
-su -c "yadm --bootstrap clone https://github.com/pilina/dotfiles.git" - pilina
+su -c "yadm clone --no-bootstrap ${YADM_REPO}" $USERNAME
 
-# reset password
-passwd -de pilina
-# add pilina to sudoers
-adduser pilina sudo
+# # reset password
+# passwd -de $USERNAME
