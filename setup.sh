@@ -28,6 +28,8 @@ if [ ! -f /.dockerenv ]; then
     $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
   # install docker engine
   apt update && apt -y install docker-ce docker-ce-cli containerd.io
+  # init docker swarm
+  docker swarm init
   # add to docker group
   adduser pilina docker
 fi
