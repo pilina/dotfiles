@@ -9,8 +9,7 @@ services:
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.docker.network=traefik-public
-        - traefik.constraint-label=traefik-public
+        - traefik.docker.network=public
         - traefik.http.middlewares.admin-auth.basicauth.users=${TRAEFIK_USER}:${TRAEFIK_PASSWORD}
         - traefik.http.routers.traefik.rule=Host(`traefik.cloud.pilina.com`)
         - traefik.http.routers.traefik.service=api@internal
@@ -45,12 +44,12 @@ services:
       # odds and ends
       - --api
     networks:
-      - traefik-public
+      - public
 
 volumes:
   letsencrypt:
 
 networks:
-  traefik-public:
+  public:
     external: true
 
