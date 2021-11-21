@@ -8,3 +8,6 @@ yadm remote set-url origin "git@github.com:pilina/dotfiles.git"
 export OSH="$HOME/.config/oh-my-bash"
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 
+if [ ! -f ~/.bashenv ] ; then
+  yadm decrypt
+fi
