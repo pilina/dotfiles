@@ -101,8 +101,7 @@ create_user() {
   # apply executable permission
   chmod a+x /usr/local/bin/yadm
   # clone yadm repo
-  sudo --background -u $USERNAME -- yadm clone --bootstrap ${YADM_REPO}
-  chown pilina $(tty)
+  su -c "yadm clone --bootstrap ${YADM_REPO}" pilina
 }
 
 setup_tailscale() {

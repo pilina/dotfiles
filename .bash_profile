@@ -16,11 +16,6 @@ if [ -d "$HOME/.local/bin" ] ; then
   PATH="$HOME/.local/bin:$PATH"
 fi
 
-# pull dotfile changes
-if [[ $(yadm pull) == *yadm/archive* ]] ; then
-  yadm decrypt
-fi
-
 # source .bashenv
 if [ ! -f "$HOME/.bashenv" ] ; then
   yadm decrypt
