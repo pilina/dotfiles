@@ -1,8 +1,3 @@
-# do a decrypt so all the files are present
-if [ ! -f "$HOME/.bashenv" ] ; then
-  yadm decrypt
-fi
-
 # if running bash
 if [ -n "$BASH_VERSION" ] ; then
   # include .bashrc if it exists
@@ -28,13 +23,10 @@ fi
 
 # source .bashenv
 if [ -f "$HOME/.bashenv" ] ; then
-  echo ".bashenv exists"
   . "$HOME/.bashenv"
 else
-  echo ".bashenv does not exist"
+  yadm decrypt
 fi
-
-echo "Tailscale Key: $TAILSCALE_KEY"
 
 # log in to tailscale
 if [[ $(tailscale status) == *stopped* ]] ; then
