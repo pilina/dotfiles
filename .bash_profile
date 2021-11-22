@@ -1,12 +1,12 @@
 # do a decrypt so all the files are present
-if [ ! -f "$HOME/.bashenv" ]; then
+if [ ! -f "$HOME/.bashenv" ] ; then
   yadm decrypt
 fi
 
 # if running bash
-if [ -n "$BASH_VERSION" ]; then
+if [ -n "$BASH_VERSION" ] ; then
   # include .bashrc if it exists
-  if [ -f "$HOME/.bashrc" ]; then
+  if [ -f "$HOME/.bashrc" ] ; then
     . "$HOME/.bashrc"
   fi
 fi
@@ -22,7 +22,7 @@ if [ -d "$HOME/.local/bin" ] ; then
 fi
 
 # pull dotfile changes
-if [[ $(yadm pull) == *yadm/archive* ]]; then
+if [[ $(yadm pull) == *yadm/archive* ]] ; then
   yadm decrypt
 fi
 
