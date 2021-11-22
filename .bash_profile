@@ -28,6 +28,6 @@ fi
 . "$HOME/.bashenv"
 
 # log in to tailscale
-if [[ $(tailscale status) == *stopped* ]] ; then
-  sudo tailscale up --authkey $TAILSCALE_KEY
+if [[ $(tailscale status) == *Logged* ]] ; then
+  sudo tailscale up --authkey $TAILSCALE_KEY --hostname kumu
 fi
