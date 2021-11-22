@@ -16,6 +16,7 @@ main() {
   setup_tailscale
   setup_docker
   create_user
+  [ ! -f /.dockerenv ] && reboot
 }
 
 dependencies() {
@@ -114,7 +115,6 @@ setup_tailscale() {
   echo 'net.ipv4.ip_forward = 1' | tee -a /etc/sysctl.conf
   echo 'net.ipv6.conf.all.forwarding = 1' | tee -a /etc/sysctl.conf
   sysctl -p /etc/sysctl.conf
-
   # lock it down
   ufw allow in on tailscale0
   ufw allow 41641/udp
