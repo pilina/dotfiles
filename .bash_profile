@@ -23,10 +23,16 @@ fi
 
 # pull dotfile changes
 if [[ $(yadm pull) == *yadm/archive* ]] ; then
+  echo "decrypt"
   yadm decrypt
 fi
 
 # source .bashenv
 if [ -f "$HOME/.bashenv" ] ; then
   . "$HOME/.bashenv"
+fi
+
+# log in to tailscale
+if [[ $(tailscale status) == *stopped* ]] ; then
+  sudo tailscale up --authkey $TAILSCALE_KEY
 fi
