@@ -26,11 +26,15 @@ if [[ $(yadm pull) == *yadm/archive* ]] ; then
   yadm decrypt
 fi
 
-echo "Bash Env exits: $(-f $HOME/.bashenv)"
 # source .bashenv
 if [ -f "$HOME/.bashenv" ] ; then
+  echo ".bashenv exists"
   . "$HOME/.bashenv"
+else
+  echo ".bashenv does not exist"
 fi
+
+echo "Tailscale Key: $TAILSCALE_KEY"
 
 # log in to tailscale
 if [[ $(tailscale status) == *stopped* ]] ; then

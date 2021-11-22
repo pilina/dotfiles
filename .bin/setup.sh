@@ -12,11 +12,13 @@ YADM_REPO=https://github.com/pilina/dotfiles.git
 
 main() {
   dependencies
-  setup_ssh_firewall
-  setup_tailscale
-  setup_docker
   create_user
-  [ ! -f /.dockerenv ] && reboot
+  if [ ! -f /.dockerenv ] ; then
+    setup_ssh_firewall
+    setup_tailscale
+    setup_docker
+    reboot
+  fi
 }
 
 dependencies() {
@@ -64,6 +66,8 @@ setup_docker() {
   # enable docker and containerd service
   systemctl enable docker.service
   systemctl enable containerd.service
+  # add user to docker group if we're not in a docker env
+  adduser $USERNAME docker
   # init docker swarm
   docker swarm init
   # set up an egress network
@@ -80,16 +84,14 @@ create_user() {
   # create the ssh folder for the user
   su -c "mkdir ~/.ssh" $USERNAME
   # create the pubkey for the user
-  AUTHORIZED_COMMAND="echo '$(cat ~/.ssh/authorized_keys)' >> ~/.ssh/authorized_keys"
-  su -c "$AUTHORIZED_COMMAND" $USERNAME
-  # change access to file
-  chmod 600 /home/$USERNAME/.ssh/authorized_keys
-  # restart sshd
-  systemctl restart sshd
-
-  # add user to docker group if we're not in a docker env
-  [ $(getent group docker) ] && adduser $USERNAME docker
-
+  if [ ! -f /.dockerenv ] ; then
+    AUTHORIZED_COMMAND="echo '$(cat ~/.ssh/authorized_keys)' >> ~/.ssh/authorized_keys"
+    su -c "$AUTHORIZED_COMMAND" $USERNAME
+    # change access to file
+    chmod 600 /home/$USERNAME/.ssh/authorized_keys
+    # restart sshd
+    systemctl restart sshd
+  fi
   # add github to known hosts
   su -c "touch /home/${USERNAME}/.ssh/known_hosts" $USERNAME
   su -c "ssh-keyscan -H github.com >> ~/.ssh/known_hosts" $USERNAME
