@@ -26,8 +26,3 @@ if [ ! -f "$HOME/.bashenv" ] ; then
   yadm decrypt
 fi
 . "$HOME/.bashenv"
-
-# log in to tailscale
-if [[ $(tailscale status) == *Logged* ]] ; then
-  sudo tailscale up --authkey $TAILSCALE_KEY --hostname kumu
-fi
