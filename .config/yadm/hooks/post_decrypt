@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
 # after decrypting source possible changes in `.bashenv`
-if [ -f "$HOME/.bashenv" ] ; then
-  . "$HOME/.bashenv"
-fi
+echo "sourcing ~/.bashenv"
+source "$HOME/.bashenv"

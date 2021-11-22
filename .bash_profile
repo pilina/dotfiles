@@ -2,7 +2,7 @@
 if [ -n "$BASH_VERSION" ] ; then
   # include .bashrc if it exists
   if [ -f "$HOME/.bashrc" ] ; then
-    . "$HOME/.bashrc"
+    source "$HOME/.bashrc"
   fi
 fi
 
@@ -23,7 +23,7 @@ fi
 
 # source .bashenv
 if [ -f "$HOME/.bashenv" ] ; then
-  . "$HOME/.bashenv"
+  source "$HOME/.bashenv"
 else
   yadm decrypt
 fi
