@@ -51,7 +51,7 @@ setup_ssh_firewall() {
 }
 
 setup_docker() {
-  if [ -f /.dockerenv ]; return; fi
+  [ -f /.dockerenv ] && return
   # add docker gpg key
   curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
   # add docker repository
@@ -87,7 +87,7 @@ create_user() {
   systemctl restart sshd
 
   # add user to docker group if we're not in a docker env
-  if [ $(getent group docker) ]; adduser $USERNAME docker; fi
+  [ $(getent group docker) ] && adduser $USERNAME docker
 
   # add github to known hosts
   su -c "touch /home/${USERNAME}/.ssh/known_hosts" $USERNAME
