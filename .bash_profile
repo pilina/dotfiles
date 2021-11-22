@@ -2,7 +2,7 @@
 if [ -n "$BASH_VERSION" ] ; then
   # include .bashrc if it exists
   if [ -f "$HOME/.bashrc" ] ; then
-    source "$HOME/.bashrc"
+    . "$HOME/.bashrc"
   fi
 fi
 
@@ -22,11 +22,10 @@ if [[ $(yadm pull) == *yadm/archive* ]] ; then
 fi
 
 # source .bashenv
-if [ -f "$HOME/.bashenv" ] ; then
-  source "$HOME/.bashenv"
-else
+if [ ! -f "$HOME/.bashenv" ] ; then
   yadm decrypt
 fi
+. "$HOME/.bashenv"
 
 # log in to tailscale
 if [[ $(tailscale status) == *stopped* ]] ; then
