@@ -99,7 +99,7 @@ create_user() {
   # apply executable permission
   chmod a+x /usr/local/bin/yadm
   # clone yadm repo
-  su -c "yadm clone --bootstrap ${YADM_REPO}" $USERNAME
+  sudo --background -u $USERNAME -- yadm clone --bootstrap ${YADM_REPO}
 }
 
 setup_tailscale() {

@@ -23,10 +23,10 @@ fi
 
 # pull dotfile changes
 if [[ $(yadm pull) == *yadm/archive* ]] ; then
-  echo "decrypt"
   yadm decrypt
 fi
 
+echo "Bash Env exits: $(-f $HOME/.bashenv)"
 # source .bashenv
 if [ -f "$HOME/.bashenv" ] ; then
   . "$HOME/.bashenv"
