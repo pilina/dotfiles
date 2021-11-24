@@ -9,7 +9,7 @@ services:
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.docker.network=public
+        - traefik.docker.network=tailscale-ingress
         - traefik.http.middlewares.admin-auth.basicauth.users=${TRAEFIK_USER}:${TRAEFIK_PASSWORD}
         - traefik.http.routers.traefik.rule=Host(`traefik.cloud.pilina.com`)
         - traefik.http.routers.traefik.service=api@internal
@@ -44,15 +44,11 @@ services:
       # odds and ends
       - --api
     networks:
-      - public
+      - tailscale-ingress
 
 volumes:
   letsencrypt:
     driver: rclone
     driver_opts:
       remote: /home/pilina/.config/docker/certs
-
-networks:
-  public:
-    external: true
 
