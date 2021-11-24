@@ -48,6 +48,9 @@ services:
 
 volumes:
   letsencrypt:
+    driver: rclone
+    driver_opts:
+      remote: /home/pilina/.config/docker/certs
 
 networks:
   public:

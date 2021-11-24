@@ -32,6 +32,7 @@ dependencies() {
       sudo \
       ufw \
       vim \
+      fuse \
       lsb-release
 }
 
@@ -68,6 +69,9 @@ setup_docker() {
   systemctl enable containerd.service
   # add user to docker group if we're not in a docker env
   adduser $USERNAME docker
+  # install rclone
+  mkdir -p /var/lib/docker-plugins/rclone/{config,cache}
+  docker plugin install rclone/docker-volume-rclone:$(dpkg --print-architecture) args="-v" --alias rclone --grant-all-permissions
   # init docker swarm
   docker swarm init
   # set up an egress network
