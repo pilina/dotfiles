@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+install() {
+  sudo apt update && sudo apt -y upgrade
+  sudo apt install -y pigpio python3-pigpio python3-smbus
+
+  sudo ln -s $HOME/.local/share/x-c1/pwr.sh /usr/local/bin/x-c1-pwr.sh
+  sudo sed -i '$ i /usr/local/bin/x-c1-pwr.sh &' /etc/rc.local
+
+  sudo ln -s $HOME/.local/share/x-c1/softsd.sh /usr/local/bin/x-c1-softsd.sh
+  sudo systemctl enable pigpiod
+
+  sudo ln -s $HOME/.local/share/x-c1/fan.py /usr/local/bin/x-c1-fan.py
+  sudo sed -i "$ i python /usr/local/bin/x-c1-fan.py &" /etc/rc.local
+
+  sudo pigpiod
+  sudo python /usr/local/bin/x-c1-fan.py &
+
+  echo "The installation is complete."
+  echo "Please run 'sudo reboot' to reboot the device."
+}
+
+uninstall() {
+  sudo sed -i '/x-c1/d' /etc/rc.local
+  sudo rm /usr/local/bin/x-c1-* -f
+
+  sudo systemctl disable pigpiod
+
+  echo "The uninstall is complete."
+  echo "Please run 'sudo reboot' to reboot the device."
+}
+
+if [ "$1" == "install" ]; then
+  install
+elif [ "$1" == "uninstall" ]; then
+  uninstall
+else
+  echo 'Usage: x-c1 <command>
+
+These are the supported x-c1 commands:
+  install       Install the fan scripts.
+  uninstall     Reomve the fan scripts.
+'
+fi
+
+exit 0
