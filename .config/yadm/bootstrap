@@ -4,6 +4,6 @@
 echo "update yadm repo origin"
 yadm remote set-url origin "git@github.com:pilina/dotfiles.git"
 
-# install oh-my-bash
-export OSH="$HOME/.config/oh-my-bash"
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
+# install bash-it
+git clone --depth=1 https://github.com/Bash-it/bash-it.git ~/.config/bash_it
+~/.config/bash_it/install.sh --silent --no-modify-config
