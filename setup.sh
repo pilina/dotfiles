@@ -110,7 +110,7 @@ setup_btrfs() {
 
   echo "Create a new disk partition"
   while true; do
-      read -p "Do you wish to install this program?" yn
+      read -p "Do you want to partition your harddrive?" yn
       case $yn in
           [Yy]* ) _create_partition; break;;
           [Nn]* ) break;;

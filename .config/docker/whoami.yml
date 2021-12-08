@@ -3,15 +3,16 @@ version: '3.3'
 services:
   whoami:
     image: traefik/whoami
-    deploy:
-      labels:
-        - traefik.enable=true
-        - traefik.docker.network=public
-        - traefik.http.routers.whoami.rule=Host(`whoami.cloud.pilina.com`)
-        - traefik.http.services.whoami.loadbalancer.server.port=80
-    networks:
-      - public
+    
+    # deploy:
+    #   labels:
+    #     - traefik.enable=true
+    #     - traefik.docker.network=public
+    #     - traefik.http.routers.whoami.rule=Host(`whoami.cloud.pilina.com`)
+    #     - traefik.http.services.whoami.loadbalancer.server.port=80
+    # networks:
+    #   - public
 
-networks:
-  public:
-    external: true
+# networks:
+#   public:
+#     external: true
