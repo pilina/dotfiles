@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-Everything needs to be run as root
+# Everything needs to be run as root
 if [ $(id -u) -ne 0 ]; then
   printf "Script must be run as root.\n"
   exit 1
