@@ -20,6 +20,8 @@ main() {
   install_tailscale
   setup_btrfs
   setup_docker
+  # setup_yadm
+  # make_readonly
 }
 
 dependencies() {
@@ -188,6 +190,31 @@ EOF
 
   echo "Reloading UFW"
   ufw reload
+}
+
+make_readonly() {
+  sudo apt -y remove --purge triggerhappy logrotate dphys-swapfile
+  sudo apt -y autoremove
+
+  # add `fastboot noswap ro` to the end of /boot/cmdline.txt
+
+  sudo apt -y install busybox-syslogd
+  sudo apt -y remove --purge rsyslog
+
+  # add `ro` to the first two mounts in `/etc/fstab`
+  # add the following temp file systems:
+  # ```
+  # tmpfs        /tmp            tmpfs   nosuid,nodev         0       0
+  # tmpfs        /var/log        tmpfs   nosuid,nodev         0       0
+  # tmpfs        /var/tmp        tmpfs   nosuid,nodev         0       0
+  # ```
+
+  sudo rm /var/lib/systemd/random-seed
+  sudo ln -s /tmp/random-seed /var/lib/systemd/random-seed
+
+  # add `ExecStartPre=/bin/echo "" > /tmp/random-seed`
+  # to `/lib/systemd/system/systemd-random-seed.service`
+  
 }
 
 main
